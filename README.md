@@ -1,6 +1,6 @@
 # Rust - Monocular Depth Prediction
 
-This is the reference Rust LibTorch implementation for testing depth estimation models using the method described in:
+This is a reference Rust LibTorch implementation for testing depth estimation models using the method described in:
 
 > **Digging into Self-Supervised Monocular Depth Prediction**
 >
