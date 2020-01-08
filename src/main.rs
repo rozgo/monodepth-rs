@@ -1,8 +1,6 @@
 use opencv::{prelude::*, core, highgui, imgcodecs};
-use std::convert::{TryInto};
+use std::mem::transmute;
 use tch::{Device, Kind};
-
-use ndarray::prelude::*;
 
 fn saturate<T: num_traits::float::Float>(val: T, min: T, max: T) -> T {
     val.max(min).min(max)
@@ -25,7 +23,7 @@ fn main() {
     let w = 640;
     let h = 192;
 
-    let img = tch::vision::image::load("assets/test_image_04.png")
+    let img = tch::vision::image::load("assets/test_image_01.png")
         .unwrap()
         .to_device(Device::Cuda(0));
     let img = img.to_kind(Kind::Float) / 255;
@@ -68,8 +66,15 @@ fn main() {
     let depth_output = depth_output.squeeze().to_device(Device::Cpu);
     println!("depth_output: {:?}", depth_output);
 
-    let cv_depth: ArrayD<f32> = (&depth_output).try_into().unwrap();
-    assert_eq!(cv_depth.shape(), &[192, 640]);
+    let mut depth_ptr : Vec<f32> = depth_output.into();
+    let depth_mat = core::Mat::new_rows_cols_with_data(
+        h,
+        w,
+        core::CV_32FC1,
+        unsafe { transmute(depth_ptr.as_mut_ptr()) },
+        0,
+    )
+    .unwrap();
 
     let depth_min = f32::from(depth_min);
     let depth_max = f32::from(depth_max);
@@ -81,7 +86,7 @@ fn main() {
             .unwrap();
     for x in 0..w {
         for y in 0..h {
-            let d: f32 = cv_depth[[y as usize, x as usize]];
+            let d: f32 = *depth_mat.at_2d(y, x).unwrap();
             let d = map_range(d, depth_min, depth_max, 0.0f32, 1.0f32);
             let m = 0f32.max(727f32.min(d * 727f32)) as i32;
             let m = magma.at_2d::<core::Vec3b>(0, m).unwrap();
