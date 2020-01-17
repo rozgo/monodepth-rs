@@ -10,3 +10,12 @@ edition = "2018"
 opencv = {version = "0.29", default-features = false, features = ["opencv-32"]}
 tch = "0.1.3"
 num-traits = "0.2"
+failure = "0.1"
+
+[[bin]]
+name = "monodepth"
+path = "src/monodepth.rs"
+
+[[bin]]
+name = "semseg"
+path = "src/semseg.rs"

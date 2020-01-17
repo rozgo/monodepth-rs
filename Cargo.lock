@@ -369,6 +369,7 @@ dependencies = [
 name = "monodepth-rs"
 version = "0.1.0"
 dependencies = [
+ "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "opencv 0.29.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tch 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
